@@ -352,8 +352,8 @@ def is_digitally_born(doc: pymupdf.Document) -> bool:
 
 # Example usage:
 if __name__ == "__main__":
-    folder = "data/deepwells"
-    output_folder = "data/deepwells_deskewed_hugh"
+    folder = "data/input"
+    output_folder = "data/output_deskew"
     # folder = "data/_test_solo"
     # folder = "data/_test_to_deskew"
     # output_folder = "data/_test_deskewed"
