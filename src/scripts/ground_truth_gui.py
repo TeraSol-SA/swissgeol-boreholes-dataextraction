@@ -206,10 +206,11 @@ class GroundTruthGUI:
         self.save_button.pack(side=tk.LEFT, padx=(10, 5))
         
         # Navigation buttons
-        ttk.Button(control_frame, text="Previous", 
-                  command=self.previous_image).pack(side=tk.RIGHT, padx=(5, 0))
         ttk.Button(control_frame, text="Next", 
                   command=self.next_image).pack(side=tk.RIGHT, padx=(5, 0))
+        ttk.Button(control_frame, text="Previous", 
+                  command=self.previous_image).pack(side=tk.RIGHT, padx=(5, 0))
+        
         
         # Current file label
         self.file_label = ttk.Label(control_frame, text="No files loaded")
@@ -260,17 +261,18 @@ class GroundTruthGUI:
         layers_control_frame = ttk.Frame(self.layers_frame)
         layers_control_frame.pack(fill=tk.X, pady=(0, 5))
         
-        # Add instruction label
-        # instruction_label = ttk.Label(layers_control_frame, text="Review auto-extracted data below. Edit only if corrections needed:", 
-        #                             font=('TkDefaultFont', 9, 'italic'))
-        # instruction_label.pack(side=tk.TOP, anchor=tk.W, pady=(0, 5))
-        
         ttk.Button(layers_control_frame, text="Add Layer", 
                   command=self.add_layer).pack(side=tk.LEFT, padx=(0, 5))
         ttk.Button(layers_control_frame, text="Delete Selected", 
                   command=self.delete_layer).pack(side=tk.LEFT, padx=(0, 5))
         ttk.Button(layers_control_frame, text="Edit Selected", 
                   command=self.edit_layer).pack(side=tk.LEFT, padx=(0, 5))
+        
+        # Add move buttons
+        ttk.Button(layers_control_frame, text="Move Up ↑", 
+                  command=self.move_layer_up).pack(side=tk.LEFT, padx=(5, 2))
+        ttk.Button(layers_control_frame, text="Move Down ↓", 
+                  command=self.move_layer_down).pack(side=tk.LEFT, padx=(2, 5))
         
         # Layers treeview
         layers_tree_frame = ttk.Frame(self.layers_frame)
@@ -299,11 +301,6 @@ class GroundTruthGUI:
         # Groundwater controls
         gw_control_frame = ttk.Frame(self.groundwater_frame)
         gw_control_frame.pack(fill=tk.X, pady=(0, 5))
-        
-        # Add instruction label
-        # gw_instruction_label = ttk.Label(gw_control_frame, text="Review auto-extracted groundwater data. Edit only if corrections needed:", 
-        #                                font=('TkDefaultFont', 9, 'italic'))
-        # gw_instruction_label.pack(side=tk.TOP, anchor=tk.W, pady=(0, 5))
         
         ttk.Button(gw_control_frame, text="Add Groundwater", 
                   command=self.add_groundwater).pack(side=tk.LEFT, padx=(0, 5))
@@ -836,6 +833,95 @@ class GroundTruthGUI:
             
             self.set_modified(True)
             self.display_json_data()
+
+    def move_layer_up(self):
+        """Move selected layer up in the list"""
+        selection = self.layers_tree.selection()
+        if not selection:
+            messagebox.showwarning("Warning", "Please select a layer to move")
+            return
+        
+        if len(selection) > 1:
+            messagebox.showwarning("Warning", "Please select only one layer to move")
+            return
+        
+        item_id = selection[0]
+        values = self.layers_tree.item(item_id, 'values')
+        if len(values) < 4:
+            return
+        
+        ref = values[3]  # Reference is in 4th column
+        if not ref:
+            return
+        
+        borehole_idx, layer_idx = map(int, ref.split('_'))
+        boreholes = self.current_pdf_data.get('boreholes', [])
+        
+        if borehole_idx >= len(boreholes):
+            return
+        
+        layers = boreholes[borehole_idx].get('layers', [])
+        if layer_idx >= len(layers) or layer_idx <= 0:
+            return  # Can't move up if it's already at the top
+        
+        # Swap with the layer above
+        layers[layer_idx], layers[layer_idx - 1] = layers[layer_idx - 1], layers[layer_idx]
+        
+        self.set_modified(True)
+        self.display_json_data()
+        
+        # Re-select the moved layer (now at layer_idx - 1)
+        self._select_layer_by_index(borehole_idx, layer_idx - 1)
+
+    def move_layer_down(self):
+        """Move selected layer down in the list"""
+        selection = self.layers_tree.selection()
+        if not selection:
+            messagebox.showwarning("Warning", "Please select a layer to move")
+            return
+        
+        if len(selection) > 1:
+            messagebox.showwarning("Warning", "Please select only one layer to move")
+            return
+        
+        item_id = selection[0]
+        values = self.layers_tree.item(item_id, 'values')
+        if len(values) < 4:
+            return
+        
+        ref = values[3]  # Reference is in 4th column
+        if not ref:
+            return
+        
+        borehole_idx, layer_idx = map(int, ref.split('_'))
+        boreholes = self.current_pdf_data.get('boreholes', [])
+        
+        if borehole_idx >= len(boreholes):
+            return
+        
+        layers = boreholes[borehole_idx].get('layers', [])
+        if layer_idx >= len(layers) - 1:
+            return  # Can't move down if it's already at the bottom
+        
+        # Swap with the layer below
+        layers[layer_idx], layers[layer_idx + 1] = layers[layer_idx + 1], layers[layer_idx]
+        
+        self.set_modified(True)
+        self.display_json_data()
+        
+        # Re-select the moved layer (now at layer_idx + 1)
+        self._select_layer_by_index(borehole_idx, layer_idx + 1)
+
+    def _select_layer_by_index(self, borehole_idx, layer_idx):
+        """Helper method to select a layer by its borehole and layer index"""
+        for item_id in self.layers_tree.get_children():
+            values = self.layers_tree.item(item_id, 'values')
+            if len(values) >= 4:
+                ref = values[3]
+                if ref == f"{borehole_idx}_{layer_idx}":
+                    self.layers_tree.selection_set(item_id)
+                    self.layers_tree.focus(item_id)
+                    break
 
     def save_current_pdf_data(self, show_popup=True):
         """Save current PDF data as ground truth to a new JSON file"""
