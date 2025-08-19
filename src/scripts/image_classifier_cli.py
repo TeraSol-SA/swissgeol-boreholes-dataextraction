@@ -17,7 +17,7 @@ class CommandLineImageClassifier:
         # Get all image files
         self.image_files = []
         if self.image_dir.exists():
-            for ext in ['*.png', '*.jpg', '*.jpeg', '*.gif', '*.bmp']:
+            for ext in ['*.png']:
                 self.image_files.extend(self.image_dir.glob(ext))
         
         # Sort files naturally

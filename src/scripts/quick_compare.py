@@ -101,6 +101,6 @@ def compare_pdfs(folder1: str, folder2: str) -> None:
 
 
 if __name__ == "__main__":
-    folder1 = "data/deepwells_s3"
-    folder2 = "data/deepwells_deskewed"
+    folder1 = "data/input"
+    folder2 = "data/output_deskew"
     compare_pdfs(folder1.strip(), folder2.strip())
