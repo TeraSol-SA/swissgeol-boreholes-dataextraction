@@ -2,9 +2,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from PIL import Image, ImageTk
 import json
-import os
 from pathlib import Path
-
 
 class LayerEditDialog:
     """Dialog for editing layer information"""
@@ -384,7 +382,7 @@ class GroundTruthGUI:
     def load_json_file(self, file_path):
         """Load JSON data from file"""
         try:
-            with open(file_path, 'r') as f:
+            with open(file_path, 'r', encoding='utf-8') as f:
                 self.current_json_data = json.load(f)
             self.json_file_path = file_path
             self.status_label.config(text=f"Loaded: {Path(file_path).name}")
@@ -947,8 +945,8 @@ class GroundTruthGUI:
         ground_truth_data = {pdf_name: self.extract_simplified_data()}
         
         try:
-            with open(output_path, 'w') as f:
-                json.dump(ground_truth_data, f, indent=2)
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump(ground_truth_data, f, indent=2, ensure_ascii=False)
             
             if show_popup:
                 messagebox.showinfo("Success", f"Ground truth saved to ground_truth/{output_filename}")
