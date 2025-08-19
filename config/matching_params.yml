@@ -186,8 +186,8 @@ coordinate_keys:
     - coordinates        
     - coordinate         
   fr:
-    - coordonnées        
-    - coordonn           
+    - coordonnées
+    - coordonn
 
 groundwater_keys:
   de:
@@ -212,9 +212,14 @@ groundwater_keys:
   fr:
     - nappe phréatique
     - nappe
+    - nappe permanente
+    - np
+    - NP
+    - Np
+    - N.P.
+    - n.p.
     - nappe d'eau
     - nappe d'eau souterraine
-    - venue d'eau
     - niveau d'eau
   en:
     - groundwater   
