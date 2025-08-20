@@ -82,7 +82,7 @@ material_description:
   fr:
     including_expressions:
       - sol
-      - végétal  # remove accents generally; ocr might be wrong
+      - vegetal
       - dallage
       - terre
       - bitume
@@ -92,7 +92,7 @@ material_description:
       - limon
       - gravier
       - asphalte
-      - humus  # hummus maybe?
+      - humus
       - brun
       - gris
       - grise
@@ -109,12 +109,22 @@ material_description:
       - marne
       - materiau
       - matrice sableuse
-      - enrobé  # accent --> check what happens if it's removed
+      - enrobe
       - phase
       - limoneuse
       - argileuse
       - argileux
       - mousse
+      - silt
+      - remblai
+      - tourbe
+      - alluvion
+      - grave
+      - grès
+      - calcaire
+      - cailloux
+      - pierre
+
     excluding_expressions:
       - monsieur
       - profil
