@@ -11,7 +11,7 @@ depth_column_params:  # these params should be optimized as soon as there is rel
 
 non_description_lines_ratio: 0.15
 
-default_language: de
+default_language: fr
 
 material_description:
   de:
@@ -213,6 +213,7 @@ groundwater_keys:
     - nappe phréatique
     - nappe
     - nappe permanente
+    - niveau piezometrique
     - np
     - NP
     - Np
